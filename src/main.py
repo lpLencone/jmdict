@@ -64,21 +64,24 @@ for entry in entries:
                       sense.findall('./stagr')]
         if s['stagr']: print(s['stagr'], end=' , ')
 
-        s['pos'] = [pos.text for pos in
+        entities = tree.docinfo.internalDTD.entities()
+        entities = {e.content: e.name for e in entities}
+
+        s['pos'] = [entities[pos.text] for pos in
                     sense.findall('./pos')]
         if s['pos']: print(s['pos'], end=' , ')
 
-        s['field'] = [field.text for field in
+        s['field'] = [entities[field.text] for field in
                       sense.findall('./field')]
         if s['field']: print(s['field'], end=' , ')
-        print(etree.tostring(
 
-        s['misc'] = [misc.text for misc in
+        s['misc'] = [entities[misc.text] for misc in
                       sense.findall('./misc')]
         if s['misc']: print(s['misc'], end=' , ')
 
         s['lsource'] = dict()
         for lsource in sense.findall('./lsource'):
+            # Use dict().get()
             s['lsource']['ls'] = lsource.text
             print(etree.tostring(lsource))
             print(lsource.text)
