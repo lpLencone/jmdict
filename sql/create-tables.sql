@@ -1,3 +1,10 @@
+CREATE TABLE IF NOT EXISTS entity (
+    id INT GENERATED ALWAYS AS IDENTITY,
+    name VARCHAR(15) UNIQUE NOT NULL,
+    description VARCHAR(80) UNIQUE NOT NULL,
+    PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS entry (
     id INT NOT NULL, -- not auto-generated; each entry comes with
                      -- a predefined `ent_seq` identifier
@@ -8,9 +15,8 @@ CREATE TABLE IF NOT EXISTS k_ele (
     id INT GENERATED ALWAYS AS IDENTITY,
     entry_id INT NOT NULL,
 
-    keb VARCHAR(20) NOT NULL,
-    ke_inf VARCHAR(6)[],
-    ke_pri VARCHAR(10)[],
+    keb VARCHAR(30) NOT NULL,
+    ke_inf INT[], -- references entity
 
     PRIMARY KEY (id),
 
@@ -23,11 +29,10 @@ CREATE TABLE IF NOT EXISTS r_ele (
     id INT GENERATED ALWAYS AS IDENTITY,
     entry_id INT NOT NULL,
 
-    reb VARCHAR(20) NOT NULL,
-    re_nokanji VARCHAR(10),
-    re_restr VARCHAR(20),
-    re_inf VARCHAR(6)[],
-    re_pri VARCHAR(10)[],
+    reb VARCHAR(50) NOT NULL, -- There are some bigger than 30 AFAIK
+    re_nokanji BOOLEAN,
+    re_restr VARCHAR(20)[],
+    re_inf INT[], -- references entity
 
     PRIMARY KEY (id),
 
@@ -42,25 +47,18 @@ CREATE TABLE IF NOT EXISTS sense (
 
     stagk INT[], -- references k_ele
     stagr INT[], -- references r_ele
-    pos VARCHAR(15)[],
+    pos INT[], -- references entity
+    field INT[], -- references entity
+    misc INT[], -- references entity
     -- TODO maybe store `xref` and `ant`
-    field VARCHAR(15)[],
-    misc VARCHAR(15)[],
 
     lsource lsource_type[], -- see create-types.sql
-    -- lsource VARCHAR(50)[],
-    -- ls_lang VARCHAR(5),
-    -- ls_type VARCHAR(5),
-    -- ls_wasei VARCHAR(1),
     
-    dial VARCHAR(15)[],
+    dial INT[], -- references entity
 
-    gloss VARCHAR(100)[] NOT NULL, -- even though it's marked with an asterisk (*), the 
+    gloss gloss_type[] NOT NULL, -- even though it's marked with an asterisk (*), the 
                                    -- documentation says there'll be at least one for 
                                    -- each sense tag
-    g_lang VARCHAR(5),
-    -- TODO maybe store `g_gend` (currently no entry uses it)
-    g_type VARCHAR(5),
     
     -- TODO maybe store `pri`
     s_inf VARCHAR(100)[], 
